@@ -1,0 +1,15 @@
+[Unit]
+Description=OpenVPN Automatic Connection
+After=network.target
+
+[Service]
+User=root
+Type=forking
+ExecStart=/usr/sbin/openvpn --daemon --suppress-timestamps --status /run/openvpn/vpn.status 10 --cd /etc/openvpn --config /home/pi/openvpn/vpn.conf
+TimeoutSec=300
+KillMode=process
+RestartSec=30s
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
