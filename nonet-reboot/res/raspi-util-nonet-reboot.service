@@ -1,0 +1,14 @@
+[Unit]
+Description=raspi-utils Net Monitor
+After=network.target
+
+[Service]
+ExecStart=/bin/bash /home/pi/raspi-util/nonet-reboot/res/net-monitor.bash
+WorkingDirectory=/home/pi/raspi-util/nonet-reboot/res/
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
