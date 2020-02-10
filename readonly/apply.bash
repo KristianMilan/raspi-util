@@ -1,10 +1,11 @@
 #!/bin/bash
 
 cdir=`dirname "$0"`
-./../common/utils.bash
+. ../common/utils.bash
 
 # Remove some common packages (careful cron is going...)
-sudo apt-get remove --purge wolfram-engine triggerhappy cron logrotate dbus dphys-swapfile xserver-common lightdm fake-hwclock
+# We're keeping fake-hwclock in case we need to depend on time-expiry certificates
+sudo apt-get remove --purge wolfram-engine triggerhappy cron logrotate dbus dphys-swapfile xserver-common lightdm
 sudo apt-get autoremove --purge
 
 sudo apt-get install busybox-syslogd
@@ -21,14 +22,6 @@ sudo touch /tmp/dhcpcd.resolv.conf
 sudo rm /etc/resolv.conf
 sudo ln -s /tmp/dhcpcd.resolv.conf /etc/resolv.conf
 
-# Move /var/lib/lightdm and /var/cache/lightdm to /tmp
-rm -rf /var/lib/lightdm
-rm -rf /var/cache/lightdm
-ln -s /tmp /var/lib/lightdm
-ln -s /tmp /var/cache/lightdm
-
-
-
 # Make SSH work
 replaceAppend /etc/ssh/sshd_config "^.*UsePrivilegeSeparation.*$" "UsePrivilegeSeparation no"
 
@@ -39,9 +32,9 @@ replaceAppend /etc/ssh/sshd_config "^.*UsePrivilegeSeparation.*$" "UsePrivilegeS
 # tmpfs /tmp     tmpfs nodev,nosuid 0 0
 replace /etc/fstab "vfat\s*defaults\s" "vfat    defaults,ro "
 replace /etc/fstab "ext4\s*defaults,noatime\s" "ext4    defaults,noatime,ro "
-append1 /etc/fstab "/var/log" "tmpfs /var/log tmpfs nodev,nosuid 0 0"
-append1 /etc/fstab "/var/tmp" "tmpfs /var/tmp tmpfs nodev,nosuid 0 0"
-append1 /etc/fstab "\s/tmp"   "tmpfs /tmp    tmpfs nodev,nosuid 0 0"
+append1 /etc/fstab "/var/log" "tmpfs /var/log tmpfs defaults,noatime,nosuid,nodev,noexec,mode=1777 0 0"
+append1 /etc/fstab "/var/tmp" "tmpfs /var/tmp tmpfs defaults,noatime,nosuid,nodev,noexec,mode=1777 0 0"
+append1 /etc/fstab "\s/tmp"   "tmpfs /tmp    tmpfs defaults,noatime,nosuid,nodev,noexec,mode=1777 0 0"
 
 echo "Done."
 echo
