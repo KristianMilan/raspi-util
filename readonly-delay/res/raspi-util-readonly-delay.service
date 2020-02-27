@@ -1,0 +1,14 @@
+[Unit]
+Description=raspi-utils Readonly locker
+After=network.target
+
+[Service]
+ExecStart=/bin/bash /home/pi/raspi-util/readonly-delay/res/readonly-monitor.bash
+WorkingDirectory=/home/pi/raspi-util/readonly-delay/res/
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
